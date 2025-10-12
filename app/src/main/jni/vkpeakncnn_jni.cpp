@@ -2503,14 +2503,15 @@ JNIEXPORT jstring JNICALL Java_com_tencent_vkpeakncnn_VkPeakNcnn_GetNcnnVersion(
 
 static bool is_adreno_6xx_or_7xx_series()
 {
-    const ncnn::GpuInfo& gpu_info = ncnn::get_gpu_info();
+    ncnn::VulkanDevice* vkdev = ncnn::get_gpu_device();
 
-    if (gpu_info.vendor_id() != 0x5143)
-        return false;
-
-    const uint32_t device_id = gpu_info.device_id();
-    if (device_id >= 0x6000000 && device_id < 0x8000000)
-        return true;
+    if (vkdev && vkdev->info.vendor_id() == 0x5143)
+    {
+        // qcom
+        const uint32_t device_id = vkdev->info.device_id();
+        if (device_id >= 0x6000000 && device_id < 0x8000000)
+            return true;
+    }
 
     return false;
 }
@@ -2587,10 +2588,39 @@ JNIEXPORT jstring JNICALL Java_com_tencent_vkpeakncnn_VkPeakNcnn_GetDriverVersio
         return env->NewStringUTF("No vulkan device");
     }
 
+    uint32_t vendor_id = vkdev->info.vendor_id();
     uint32_t driver_version = vkdev->info.driver_version();
 
     char tmp[128];
-    sprintf(tmp, "%u.%u.%u", VK_VERSION_MAJOR(driver_version), VK_VERSION_MINOR(driver_version), VK_VERSION_PATCH(driver_version));
+    if (vendor_id == 0x10de)
+    {
+        // nvidia
+        sprintf(tmp, "%u.%u.%u.%u", (driver_version >> 22) & 0x3ff, (driver_version >> 14) & 0x0ff, (driver_version >> 6) & 0x0ff, (driver_version) & 0x003f);
+    }
+    else if (vendor_id == 0x14e4)
+    {
+        // broadcom
+        uint32_t major = driver_version / 10000;
+        uint32_t minor = (driver_version % 10000) / 100;
+        sprintf(tmp, "%u.%u", major, minor);
+    }
+    else if (vendor_id == 0x1010)
+    {
+        // imagination
+        if (driver_version > 500000000)
+        {
+            sprintf(tmp, "0.0.%u", driver_version - 500000000);
+        }
+        else
+        {
+            sprintf(tmp, "%u", driver_version);
+        }
+    }
+    else
+    {
+        // use vulkan version convention
+        sprintf(tmp, "%u.%u.%u", VK_VERSION_MAJOR(driver_version), VK_VERSION_MINOR(driver_version), VK_VERSION_PATCH(driver_version));
+    }
 
     return env->NewStringUTF(tmp);
 }
