@@ -15,14 +15,14 @@
 package com.tencent.vkpeakncnn;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+import android.graphics.Color;
 import android.view.View;
-import android.view.Window;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -30,6 +30,8 @@ import android.widget.TextView;
 public class MainActivity extends Activity
 {
     private VkPeakNcnn vkpeakncnn = new VkPeakNcnn();
+
+    private String[] vulkanItems = {"system driver", "mesa turnip"};
 
     private TextView textviewModel;
     private TextView textviewAndroid;
@@ -39,9 +41,12 @@ public class MainActivity extends Activity
     private TextView textviewAPI;
     private TextView textviewDriver;
 
+    private Spinner spinnerVulkan;
     private Spinner spinnerMacs;
     private Spinner spinnerCounts;
     private Spinner spinnerLoops;
+
+    private int current_vulkan = 0;
 
     private TextView textviewFP32;
     private TextView textviewFP32v4;
@@ -50,14 +55,24 @@ public class MainActivity extends Activity
     private TextView textviewFP16mm;
     private TextView textviewFP64;
     private TextView textviewFP64v4;
+    private TextView textviewBF16dp;
+    private TextView textviewBF16mm;
+    private TextView textviewFP8mm;
+    private TextView textviewBF8mm;
+
     private TextView textviewINT32;
     private TextView textviewINT32v4;
     private TextView textviewINT16;
     private TextView textviewINT16v4;
+    private TextView textviewINT64;
+    private TextView textviewINT64v4;
     private TextView textviewINT8dp;
     private TextView textviewINT8mm;
-    private TextView textviewBF16dp;
-    private TextView textviewBF16mm;
+
+    private TextView textviewCPh2h;
+    private TextView textviewCPh2d;
+    private TextView textviewCPd2h;
+    private TextView textviewCPd2d;
 
     private float fp32;
     private float fp32v4;
@@ -66,14 +81,24 @@ public class MainActivity extends Activity
     private float fp16mm;
     private float fp64;
     private float fp64v4;
+    private float bf16dp;
+    private float bf16mm;
+    private float fp8mm;
+    private float bf8mm;
+
     private float int32;
     private float int32v4;
     private float int16;
     private float int16v4;
+    private float int64;
+    private float int64v4;
     private float int8dp;
     private float int8mm;
-    private float bf16dp;
-    private float bf16mm;
+
+    private float cph2h;
+    private float cph2d;
+    private float cpd2h;
+    private float cpd2d;
 
     /** Called when the activity is first created. */
     @Override
@@ -100,6 +125,7 @@ public class MainActivity extends Activity
         textviewAPI.setText("  " + vkpeakncnn.GetApiVersion());
         textviewDriver.setText("  " + vkpeakncnn.GetDriverVersion());
 
+        spinnerVulkan = (Spinner) findViewById(R.id.spinnerVulkan);
         spinnerMacs = (Spinner) findViewById(R.id.spinnerMacs);
         spinnerCounts = (Spinner) findViewById(R.id.spinnerCounts);
         spinnerLoops = (Spinner) findViewById(R.id.spinnerLoops);
@@ -111,19 +137,113 @@ public class MainActivity extends Activity
         textviewFP16mm = (TextView) findViewById(R.id.textviewFP16mm);
         textviewFP64 = (TextView) findViewById(R.id.textviewFP64);
         textviewFP64v4 = (TextView) findViewById(R.id.textviewFP64v4);
+        textviewBF16dp = (TextView) findViewById(R.id.textviewBF16dp);
+        textviewBF16mm = (TextView) findViewById(R.id.textviewBF16mm);
+        textviewFP8mm = (TextView) findViewById(R.id.textviewFP8mm);
+        textviewBF8mm = (TextView) findViewById(R.id.textviewBF8mm);
+
         textviewINT32 = (TextView) findViewById(R.id.textviewINT32);
         textviewINT32v4 = (TextView) findViewById(R.id.textviewINT32v4);
         textviewINT16 = (TextView) findViewById(R.id.textviewINT16);
         textviewINT16v4 = (TextView) findViewById(R.id.textviewINT16v4);
+        textviewINT64 = (TextView) findViewById(R.id.textviewINT64);
+        textviewINT64v4 = (TextView) findViewById(R.id.textviewINT64v4);
         textviewINT8dp = (TextView) findViewById(R.id.textviewINT8dp);
         textviewINT8mm = (TextView) findViewById(R.id.textviewINT8mm);
-        textviewBF16dp = (TextView) findViewById(R.id.textviewBF16dp);
-        textviewBF16mm = (TextView) findViewById(R.id.textviewBF16mm);
+
+        textviewCPh2h = (TextView) findViewById(R.id.textviewCPh2h);
+        textviewCPh2d = (TextView) findViewById(R.id.textviewCPh2d);
+        textviewCPd2h = (TextView) findViewById(R.id.textviewCPd2h);
+        textviewCPd2d = (TextView) findViewById(R.id.textviewCPd2d);
 
         // apply default settings
-        spinnerMacs.setSelection(1);
-        spinnerCounts.setSelection(1);
-        spinnerLoops.setSelection(1);
+        spinnerVulkan.setSelection(0);
+        spinnerMacs.setSelection(0);
+        spinnerCounts.setSelection(0);
+        spinnerLoops.setSelection(0);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, vulkanItems) {
+            {
+                setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            }
+
+            @Override
+            public boolean isEnabled(int position) {
+                return vkpeakncnn.IsVulkanSupported(position);
+            }
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView textView = (TextView) view.findViewById(android.R.id.text1);
+                if (!isEnabled(position)) {
+                    textView.setTextColor(Color.GRAY);
+                } else {
+                    textView.setTextColor(Color.BLACK);
+                }
+                return view;
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView textView = (TextView) view.findViewById(android.R.id.text1);
+                if (!isEnabled(position)) {
+                    textView.setTextColor(Color.GRAY);
+                } else {
+                    textView.setTextColor(Color.BLACK);
+                }
+                return view;
+            }
+        };
+        spinnerVulkan.setAdapter(adapter);
+
+        spinnerVulkan.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long id)
+            {
+                if (position != current_vulkan)
+                {
+                    current_vulkan = position;
+                    vkpeakncnn.ResetVulkan(current_vulkan);
+
+                    textviewDevice.setText("  " + vkpeakncnn.GetVkDevice());
+                    textviewAPI.setText("  " + vkpeakncnn.GetApiVersion());
+                    textviewDriver.setText("  " + vkpeakncnn.GetDriverVersion());
+
+                    textviewFP32.setText("");
+                    textviewFP32v4.setText("");
+                    textviewFP16.setText("");
+                    textviewFP16v4.setText("");
+                    textviewFP16mm.setText("");
+                    textviewFP64.setText("");
+                    textviewFP64v4.setText("");
+                    textviewBF16dp.setText("");
+                    textviewBF16mm.setText("");
+                    textviewFP8mm.setText("");
+                    textviewBF8mm.setText("");
+
+                    textviewINT32.setText("");
+                    textviewINT32v4.setText("");
+                    textviewINT16.setText("");
+                    textviewINT16v4.setText("");
+                    textviewINT64.setText("");
+                    textviewINT64v4.setText("");
+                    textviewINT8dp.setText("");
+                    textviewINT8mm.setText("");
+
+                    textviewCPh2h.setText("");
+                    textviewCPh2d.setText("");
+                    textviewCPd2h.setText("");
+                    textviewCPd2d.setText("");
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0)
+            {
+            }
+        });
 
         Button buttonRun = (Button) findViewById(R.id.buttonRun);
         buttonRun.setOnClickListener(new View.OnClickListener() {
@@ -168,6 +288,23 @@ public class MainActivity extends Activity
                         textviewFP64v4.post(new Runnable() { public void run() { textviewFP64v4.setText(textHelper(fp64v4)); } });
 
                         sleep(500);
+                        bf16dp = vkpeakncnn.Run(loop, count_mb, cmd_loop, 0, 7, 4);
+                        textviewBF16dp.post(new Runnable() { public void run() { textviewBF16dp.setText(textHelper(bf16dp)); } });
+
+                        sleep(500);
+                        bf16mm = vkpeakncnn.Run(loop, count_mb, cmd_loop, 0, 7, 256);
+                        textviewBF16mm.post(new Runnable() { public void run() { textviewBF16mm.setText(textHelper(bf16mm)); } });
+
+                        sleep(500);
+                        fp8mm = vkpeakncnn.Run(loop, count_mb, cmd_loop, 0, 8, 256);
+                        textviewFP8mm.post(new Runnable() { public void run() { textviewFP8mm.setText(textHelper(fp8mm)); } });
+
+                        sleep(500);
+                        bf8mm = vkpeakncnn.Run(loop, count_mb, cmd_loop, 0, 9, 256);
+                        textviewBF8mm.post(new Runnable() { public void run() { textviewBF8mm.setText(textHelper(bf8mm)); } });
+
+
+                        sleep(500);
                         int32 = vkpeakncnn.Run(loop, count_mb, cmd_loop, 3, 3, 1);
                         textviewINT32.post(new Runnable() { public void run() { textviewINT32.setText(textHelper(int32)); } });
 
@@ -184,22 +321,41 @@ public class MainActivity extends Activity
                         textviewINT16v4.post(new Runnable() { public void run() { textviewINT16v4.setText(textHelper(int16v4)); } });
 
                         sleep(500);
-                        int8dp = vkpeakncnn.Run(loop, count_mb, cmd_loop, 3, 5, 4);
+                        int64 = vkpeakncnn.Run(loop, count_mb, cmd_loop, 5, 5, 1);
+                        textviewINT64.post(new Runnable() { public void run() { textviewINT64.setText(textHelper(int64)); } });
+
+                        sleep(500);
+                        int64v4 = vkpeakncnn.Run(loop, count_mb, cmd_loop, 5, 5, 4);
+                        textviewINT64v4.post(new Runnable() { public void run() { textviewINT64v4.setText(textHelper(int64v4)); } });
+
+                        sleep(500);
+                        int8dp = vkpeakncnn.Run(loop, count_mb, cmd_loop, 3, 6, 4);
                         textviewINT8dp.post(new Runnable() { public void run() { textviewINT8dp.setText(textHelper(int8dp)); } });
 
                         sleep(500);
-                        int8mm = vkpeakncnn.Run(loop, count_mb, cmd_loop, 3, 5, 256);
+                        int8mm = vkpeakncnn.Run(loop, count_mb, cmd_loop, 3, 6, 256);
                         textviewINT8mm.post(new Runnable() { public void run() { textviewINT8mm.setText(textHelper(int8mm)); } });
 
+
+                        // copy test is very fast, run 4x tasks and 4x times
                         sleep(500);
-                        bf16dp = vkpeakncnn.Run(loop, count_mb, cmd_loop, 0, 6, 4);
-                        textviewBF16dp.post(new Runnable() { public void run() { textviewBF16dp.setText(textHelper(bf16dp)); } });
+                        cph2h = vkpeakncnn.Run_copy(count_mb * 4, cmd_loop * 4, 0, 0);
+                        textviewCPh2h.post(new Runnable() { public void run() { textviewCPh2h.setText(textHelper(cph2h)); } });
 
                         sleep(500);
-                        bf16mm = vkpeakncnn.Run(loop, count_mb, cmd_loop, 0, 6, 256);
-                        textviewBF16mm.post(new Runnable() { public void run() { textviewBF16mm.setText(textHelper(bf16mm)); } });
+                        cph2d = vkpeakncnn.Run_copy(count_mb * 4, cmd_loop * 4, 0, 1);
+                        textviewCPh2d.post(new Runnable() { public void run() { textviewCPh2d.setText(textHelper(cph2d)); } });
 
-                        textviewBF16mm.post(new Runnable() { public void run() {
+                        sleep(500);
+                        cpd2h = vkpeakncnn.Run_copy(count_mb * 4, cmd_loop * 4, 1, 0);
+                        textviewCPd2h.post(new Runnable() { public void run() { textviewCPd2h.setText(textHelper(cpd2h)); } });
+
+                        sleep(500);
+                        cpd2d = vkpeakncnn.Run_copy(count_mb * 4, cmd_loop * 4, 1, 1);
+                        textviewCPd2d.post(new Runnable() { public void run() { textviewCPd2d.setText(textHelper(cpd2d)); } });
+
+
+                        textviewCPd2d.post(new Runnable() { public void run() {
                             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                         } });

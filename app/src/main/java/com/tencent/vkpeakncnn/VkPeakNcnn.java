@@ -14,23 +14,43 @@
 
 package com.tencent.vkpeakncnn;
 
-import android.content.res.AssetManager;
-
 public class VkPeakNcnn
 {
     public native String GetPlatform();
 
     public native String GetNcnnVersion();
 
+    public native boolean IsVulkanSupported(int type);
+    public native void ResetVulkan(int type);
+
     public native String GetVkDevice();
     public native String GetApiVersion();
     public native String GetDriverVersion();
 
-    // device_id        = 0
-    // storage_type     = 0/1/2/3/4/5/6 = fp32 fp16 fp64 int32 int16 int8 bf16
-    // arithmetic_type  = 0/1/2/3/4/5/6 = fp32 fp16 fp64 int32 int16 int8 bf16
-    // packing_type     = 1/4/256       = scalar vec4/dotprod matrix
+    // storage_type / arithmetic_type
+    //      0 = fp32
+    //      1 = fp16
+    //      2 = fp64
+    //      3 = int32
+    //      4 = int16
+    //      5 = int64
+    //      6 = int8
+    //      7 = bf16
+    //      8 = fp8
+    //      9 = bf8
+
+    // packing_type
+    //      1 = scalar
+    //      4 = vec4 / dotprod
+    //    256 = matrix
+
     public native float Run(int loop, int count_mb, int cmd_loop, int storage_type, int arithmetic_type, int packing_type);
+
+    // device_type
+    //      0 = cpu
+    //      1 = gpu
+
+    public native float Run_copy(int count_mb, int cmd_loop, int from_type, int to_type);
 
     static {
         System.loadLibrary("vkpeakncnn");

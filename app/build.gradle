@@ -10,7 +10,8 @@ android {
         applicationId "com.tencent.vkpeakncnn"
         archivesBaseName = "$applicationId"
 
-        minSdk 24
+        minSdkVersion 24
+        targetSdkVersion 35
 
         externalNativeBuild {
             cmake {

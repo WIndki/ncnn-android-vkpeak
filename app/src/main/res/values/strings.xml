@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">vkpeakncnn</string>
     <string-array name="macs_array">
+        <item>4</item>
         <item>10</item>
         <item>20</item>
         <item>50</item>

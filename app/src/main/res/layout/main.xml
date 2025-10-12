@@ -1,222 +1,358 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:columnCount="2"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="Model" />
+    <GridLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="2">
 
-    <TextView
-        android:id="@+id/textviewModel"
-        android:layout_gravity="left" />
+        <TextView
+            android:layout_gravity="right"
+            android:text="Model" />
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="Android" />
+        <TextView
+            android:id="@+id/textviewModel"
+            android:layout_gravity="left" />
 
-    <TextView
-        android:id="@+id/textviewAndroid"
-        android:layout_gravity="left" />
+        <TextView
+            android:layout_gravity="right"
+            android:text="Android" />
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="Version" />
+        <TextView
+            android:id="@+id/textviewAndroid"
+            android:layout_gravity="left" />
 
-    <TextView
-        android:id="@+id/textviewVersion"
-        android:layout_gravity="left" />
+        <TextView
+            android:layout_gravity="right"
+            android:text="Version" />
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="Platform" />
+        <TextView
+            android:id="@+id/textviewVersion"
+            android:layout_gravity="left" />
 
-    <TextView
-        android:id="@+id/textviewPlatform"
-        android:layout_gravity="left" />
+        <TextView
+            android:layout_gravity="right"
+            android:text="Platform" />
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="Device" />
+        <TextView
+            android:id="@+id/textviewPlatform"
+            android:layout_gravity="left" />
 
-    <TextView
-        android:id="@+id/textviewDevice"
-        android:layout_gravity="left" />
+        <TextView
+            android:layout_gravity="right"
+            android:text="Vulkan" />
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="API" />
+        <Spinner
+            android:id="@+id/spinnerVulkan"
+            android:layout_gravity="fill_horizontal"
+            android:drawSelectorOnTop="true" />
 
-    <TextView
-        android:id="@+id/textviewAPI"
-        android:layout_gravity="left" />
+        <TextView
+            android:layout_gravity="right"
+            android:text="Device" />
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="Driver" />
+        <TextView
+            android:id="@+id/textviewDevice"
+            android:layout_gravity="left" />
 
-    <TextView
-        android:id="@+id/textviewDriver"
-        android:layout_gravity="left" />
+        <TextView
+            android:layout_gravity="right"
+            android:text="API" />
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="MACs(16x)" />
+        <TextView
+            android:id="@+id/textviewAPI"
+            android:layout_gravity="left" />
 
-    <Spinner
-        android:id="@+id/spinnerMacs"
-        android:layout_gravity="fill_horizontal"
-        android:drawSelectorOnTop="true"
-        android:entries="@array/macs_array" />
+        <TextView
+            android:layout_gravity="right"
+            android:text="Driver" />
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="Count(MB)" />
+        <TextView
+            android:id="@+id/textviewDriver"
+            android:layout_gravity="left" />
 
-    <Spinner
-        android:id="@+id/spinnerCounts"
-        android:layout_gravity="fill_horizontal"
-        android:drawSelectorOnTop="true"
-        android:entries="@array/counts_array" />
+        <TextView
+            android:layout_gravity="right"
+            android:text="MACs(16x)" />
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="Loops" />
+        <Spinner
+            android:id="@+id/spinnerMacs"
+            android:layout_gravity="fill_horizontal"
+            android:drawSelectorOnTop="true"
+            android:entries="@array/macs_array" />
 
-    <Spinner
-        android:id="@+id/spinnerLoops"
-        android:layout_gravity="fill_horizontal"
-        android:drawSelectorOnTop="true"
-        android:entries="@array/loops_array" />
+        <TextView
+            android:layout_gravity="right"
+            android:text="Count(MB)" />
 
-    <Button
-        android:layout_gravity="right"
-        android:id="@+id/buttonRun"
-        android:text="Run" />
+        <Spinner
+            android:id="@+id/spinnerCounts"
+            android:layout_gravity="fill_horizontal"
+            android:drawSelectorOnTop="true"
+            android:entries="@array/counts_array" />
 
-    <TextView
-        android:layout_gravity="left"
-        android:text="GFLOPS / GIOPS" />
+        <TextView
+            android:layout_gravity="right"
+            android:text="Loops" />
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="fp32-scalar" />
+        <Spinner
+            android:id="@+id/spinnerLoops"
+            android:layout_gravity="fill_horizontal"
+            android:drawSelectorOnTop="true"
+            android:entries="@array/loops_array" />
 
-    <TextView
-        android:id="@+id/textviewFP32"
-        android:layout_gravity="left" />
+        <Button
+            android:id="@+id/buttonRun"
+            android:layout_gravity="right"
+            android:text="Run" />
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="fp32-vec4" />
+        <TextView
+            android:layout_gravity="left"
+            android:text="GFLOPS / GIOPS / GBPS" />
 
-    <TextView
-        android:id="@+id/textviewFP32v4"
-        android:layout_gravity="left" />
+    </GridLayout>
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="fp16-scalar" />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/textviewFP16"
-        android:layout_gravity="left" />
+        <GridLayout
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:columnCount="2">
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="fp16-vec4" />
+            <TextView
+                android:layout_gravity="right"
+                android:text="fp32-scalar" />
 
-    <TextView
-        android:id="@+id/textviewFP16v4"
-        android:layout_gravity="left" />
+            <TextView
+                android:id="@+id/textviewFP32"
+                android:layout_gravity="left" />
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="fp16-matrix" />
+            <TextView
+                android:layout_gravity="right"
+                android:text="fp32-vec4" />
 
-    <TextView
-        android:id="@+id/textviewFP16mm"
-        android:layout_gravity="left" />
+            <TextView
+                android:id="@+id/textviewFP32v4"
+                android:layout_gravity="left" />
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="fp64-scalar" />
+            <TextView android:layout_gravity="right" />
 
-    <TextView
-        android:id="@+id/textviewFP64"
-        android:layout_gravity="left" />
+            <TextView android:layout_gravity="left" />
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="fp64-vec4" />
+            <TextView
+                android:layout_gravity="right"
+                android:text="fp16-scalar" />
 
-    <TextView
-        android:id="@+id/textviewFP64v4"
-        android:layout_gravity="left" />
+            <TextView
+                android:id="@+id/textviewFP16"
+                android:layout_gravity="left" />
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="int32-scalar" />
+            <TextView
+                android:layout_gravity="right"
+                android:text="fp16-vec4" />
 
-    <TextView
-        android:id="@+id/textviewINT32"
-        android:layout_gravity="left" />
+            <TextView
+                android:id="@+id/textviewFP16v4"
+                android:layout_gravity="left" />
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="int32-vec4" />
+            <TextView
+                android:layout_gravity="right"
+                android:text="fp16-matrix" />
 
-    <TextView
-        android:id="@+id/textviewINT32v4"
-        android:layout_gravity="left" />
+            <TextView
+                android:id="@+id/textviewFP16mm"
+                android:layout_gravity="left" />
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="int16-scalar" />
+            <TextView android:layout_gravity="right" />
 
-    <TextView
-        android:id="@+id/textviewINT16"
-        android:layout_gravity="left" />
+            <TextView android:layout_gravity="left" />
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="int16-vec4" />
+            <TextView
+                android:layout_gravity="right"
+                android:text="fp64-scalar" />
 
-    <TextView
-        android:id="@+id/textviewINT16v4"
-        android:layout_gravity="left" />
+            <TextView
+                android:id="@+id/textviewFP64"
+                android:layout_gravity="left" />
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="int8-dotprod" />
+            <TextView
+                android:layout_gravity="right"
+                android:text="fp64-vec4" />
 
-    <TextView
-        android:id="@+id/textviewINT8dp"
-        android:layout_gravity="left" />
+            <TextView
+                android:id="@+id/textviewFP64v4"
+                android:layout_gravity="left" />
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="int8-matrix" />
+            <TextView android:layout_gravity="right" />
 
-    <TextView
-        android:id="@+id/textviewINT8mm"
-        android:layout_gravity="left" />
+            <TextView android:layout_gravity="left" />
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="bf16-dotprod" />
+            <TextView
+                android:layout_gravity="right"
+                android:text="bf16-dotprod" />
 
-    <TextView
-        android:id="@+id/textviewBF16dp"
-        android:layout_gravity="left" />
+            <TextView
+                android:id="@+id/textviewBF16dp"
+                android:layout_gravity="left" />
 
-    <TextView
-        android:layout_gravity="right"
-        android:text="bf16-matrix" />
+            <TextView
+                android:layout_gravity="right"
+                android:text="bf16-matrix" />
 
-    <TextView
-        android:id="@+id/textviewBF16mm"
-        android:layout_gravity="left" />
+            <TextView
+                android:id="@+id/textviewBF16mm"
+                android:layout_gravity="left" />
 
-</GridLayout>
+            <TextView android:layout_gravity="right" />
+
+            <TextView android:layout_gravity="left" />
+
+            <TextView
+                android:layout_gravity="right"
+                android:text="fp8-matrix" />
+
+            <TextView
+                android:id="@+id/textviewFP8mm"
+                android:layout_gravity="left" />
+
+            <TextView
+                android:layout_gravity="right"
+                android:text="bf8-matrix" />
+
+            <TextView
+                android:id="@+id/textviewBF8mm"
+                android:layout_gravity="left" />
+
+        </GridLayout>
+
+        <GridLayout
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:columnCount="2">
+
+            <TextView
+                android:layout_gravity="right"
+                android:text="int32-scalar" />
+
+            <TextView
+                android:id="@+id/textviewINT32"
+                android:layout_gravity="left" />
+
+            <TextView
+                android:layout_gravity="right"
+                android:text="int32-vec4" />
+
+            <TextView
+                android:id="@+id/textviewINT32v4"
+                android:layout_gravity="left" />
+
+            <TextView android:layout_gravity="right" />
+
+            <TextView android:layout_gravity="left" />
+
+            <TextView
+                android:layout_gravity="right"
+                android:text="int16-scalar" />
+
+            <TextView
+                android:id="@+id/textviewINT16"
+                android:layout_gravity="left" />
+
+            <TextView
+                android:layout_gravity="right"
+                android:text="int16-vec4" />
+
+            <TextView
+                android:id="@+id/textviewINT16v4"
+                android:layout_gravity="left" />
+
+            <TextView android:layout_gravity="right" />
+
+            <TextView android:layout_gravity="left" />
+
+            <TextView
+                android:layout_gravity="right"
+                android:text="int64-scalar" />
+
+            <TextView
+                android:id="@+id/textviewINT64"
+                android:layout_gravity="left" />
+
+            <TextView
+                android:layout_gravity="right"
+                android:text="int64-vec4" />
+
+            <TextView
+                android:id="@+id/textviewINT64v4"
+                android:layout_gravity="left" />
+
+            <TextView android:layout_gravity="right" />
+
+            <TextView android:layout_gravity="left" />
+
+            <TextView
+                android:layout_gravity="right"
+                android:text="int8-dotprod" />
+
+            <TextView
+                android:id="@+id/textviewINT8dp"
+                android:layout_gravity="left" />
+
+            <TextView
+                android:layout_gravity="right"
+                android:text="int8-matrix" />
+
+            <TextView
+                android:id="@+id/textviewINT8mm"
+                android:layout_gravity="left" />
+
+            <TextView android:layout_gravity="right" />
+
+            <TextView android:layout_gravity="left" />
+
+            <TextView
+                android:layout_gravity="right"
+                android:text="copy-h2h" />
+
+            <TextView
+                android:id="@+id/textviewCPh2h"
+                android:layout_gravity="left" />
+
+            <TextView
+                android:layout_gravity="right"
+                android:text="copy-h2d" />
+
+            <TextView
+                android:id="@+id/textviewCPh2d"
+                android:layout_gravity="left" />
+
+            <TextView
+                android:layout_gravity="right"
+                android:text="copy-d2h" />
+
+            <TextView
+                android:id="@+id/textviewCPd2h"
+                android:layout_gravity="left" />
+
+            <TextView
+                android:layout_gravity="right"
+                android:text="copy-d2d" />
+
+            <TextView
+                android:id="@+id/textviewCPd2d"
+                android:layout_gravity="left" />
+
+        </GridLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
