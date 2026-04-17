@@ -2501,34 +2501,6 @@ JNIEXPORT jstring JNICALL Java_com_tencent_vkpeakncnn_VkPeakNcnn_GetNcnnVersion(
     return env->NewStringUTF(NCNN_VERSION_STRING);
 }
 
-static bool is_adreno_6xx_or_7xx_series()
-{
-    ncnn::VulkanDevice* vkdev = ncnn::get_gpu_device();
-
-    if (vkdev && vkdev->info.vendor_id() == 0x5143)
-    {
-        // qcom
-        const char* device_name = vkdev->info.device_name();
-        if (!device_name)
-            return false;
-
-        // look for Adreno
-        if (strstr(device_name, "Adreno") == nullptr)
-            return false;
-
-        int model = 0;
-        if (sscanf(device_name, "Adreno (TM) %d", &model) == 1)
-        {
-            if (model >= 600 && model < 700)
-                return true;  // Adreno 6xx
-            if (model >= 700 && model < 800)
-                return true;  // Adreno 7xx
-        }
-    }
-
-    return false;
-}
-
 // public native boolean IsVulkanSupported(int type);
 JNIEXPORT jboolean JNICALL Java_com_tencent_vkpeakncnn_VkPeakNcnn_IsVulkanSupported(JNIEnv *env, jobject thiz, jint type)
 {
@@ -2538,20 +2510,7 @@ JNIEXPORT jboolean JNICALL Java_com_tencent_vkpeakncnn_VkPeakNcnn_IsVulkanSuppor
     }
     if (type == 1)
     {
-#if __aarch64__
-        // turnip only supports adreno 6xx and 7xx
-        static bool g_inited = false;
-        static bool g_is_adreno_6xx_or_7xx_series = false;
-        if (!g_inited)
-        {
-            g_is_adreno_6xx_or_7xx_series = is_adreno_6xx_or_7xx_series();
-            g_inited = true;
-        }
-
-        return g_is_adreno_6xx_or_7xx_series ? JNI_TRUE : JNI_FALSE;
-#else
-        return JNI_FALSE;
-#endif
+        return JNI_TRUE;
     }
 
     return JNI_FALSE;
