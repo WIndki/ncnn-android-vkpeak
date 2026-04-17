@@ -1,6 +1,9 @@
 name: build-apk
 on: workflow_dispatch
 
+permissions:
+  contents: read
+
 env:
   MESA_TURNIP_VERSION: 25.2.4
   BUILD_TOOLS_VERSION: 36.0.0
@@ -34,13 +37,14 @@ jobs:
         run: |
           UNSIGNED_APK=`find app/build/outputs/apk/release -type f -name "*-release-unsigned.apk" | head -n 1`
           OUTPUT_APK=app-release.apk
+          KEYSTORE_PASS=$(openssl rand -hex 16)
           keytool -genkey -noprompt -alias ncnn \
               -dname "CN=mqttserver.ibm.com, OU=ID, O=IBM, L=Hursley, S=Hants, C=GB" \
-              -keystore ncnn.keystore -storepass 7767517 -keypass 7767517 \
-              -keyalg RSA -keysize 2048 -validity 10000
+              -keystore ncnn.keystore -storepass ${KEYSTORE_PASS} -keypass ${KEYSTORE_PASS} \
+              -keyalg RSA -keysize 2048 -validity 9125
           ${ANDROID_HOME}/build-tools/${BUILD_TOOLS_VERSION}/zipalign -f -v 4 ${UNSIGNED_APK} ${OUTPUT_APK}
           ${ANDROID_HOME}/build-tools/${BUILD_TOOLS_VERSION}/apksigner sign --ks ncnn.keystore --ks-key-alias ncnn \
-              --ks-pass pass:7767517 --key-pass pass:7767517 --out ${OUTPUT_APK} ${OUTPUT_APK}
+              --ks-pass pass:${KEYSTORE_PASS} --key-pass pass:${KEYSTORE_PASS} --out ${OUTPUT_APK} ${OUTPUT_APK}
           ${ANDROID_HOME}/build-tools/${BUILD_TOOLS_VERSION}/apksigner verify ${OUTPUT_APK}
 
       - name: upload-apk
