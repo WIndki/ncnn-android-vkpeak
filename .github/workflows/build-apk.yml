@@ -1,0 +1,55 @@
+name: build-apk
+on: workflow_dispatch
+
+permissions:
+  contents: read
+
+env:
+  MESA_TURNIP_VERSION: 25.2.4
+  BUILD_TOOLS_VERSION: 36.0.0
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: ndk-fix-debug
+        run: sed -i -e '/^  -g$/d' $ANDROID_NDK_LATEST_HOME/build/cmake/android-legacy.toolchain.cmake
+
+      - name: vulkan-turnip-driver
+        run: |
+          wget -q https://github.com/nihui/mesa-turnip-android-driver/releases/download/${MESA_TURNIP_VERSION}/mesa-turnip-android-${MESA_TURNIP_VERSION}.zip
+          mkdir -p app/src/main/jniLibs/arm64-v8a
+          unzip -q mesa-turnip-android-${MESA_TURNIP_VERSION}.zip -d app/src/main/jniLibs/arm64-v8a
+
+      - name: build-apk
+        run: bash ./gradlew assembleRelease --stacktrace
+
+      - name: sign-apk
+        run: |
+          UNSIGNED_APK=`find app/build/outputs/apk/release -type f -name "*-release-unsigned.apk" | head -n 1`
+          OUTPUT_APK=app-release.apk
+          KEYSTORE_PASS=$(openssl rand -hex 16)
+          keytool -genkey -noprompt -alias ncnn \
+              -dname "CN=mqttserver.ibm.com, OU=ID, O=IBM, L=Hursley, S=Hants, C=GB" \
+              -keystore ncnn.keystore -storepass ${KEYSTORE_PASS} -keypass ${KEYSTORE_PASS} \
+              -keyalg RSA -keysize 2048 -validity 9125
+          ${ANDROID_HOME}/build-tools/${BUILD_TOOLS_VERSION}/zipalign -f -v 4 ${UNSIGNED_APK} ${OUTPUT_APK}
+          ${ANDROID_HOME}/build-tools/${BUILD_TOOLS_VERSION}/apksigner sign --ks ncnn.keystore --ks-key-alias ncnn \
+              --ks-pass pass:${KEYSTORE_PASS} --key-pass pass:${KEYSTORE_PASS} --out ${OUTPUT_APK} ${OUTPUT_APK}
+          ${ANDROID_HOME}/build-tools/${BUILD_TOOLS_VERSION}/apksigner verify ${OUTPUT_APK}
+
+      - name: upload-apk
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk
+          path: app-release.apk
+          if-no-files-found: error
