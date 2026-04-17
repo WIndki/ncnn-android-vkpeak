@@ -2510,6 +2510,7 @@ JNIEXPORT jboolean JNICALL Java_com_tencent_vkpeakncnn_VkPeakNcnn_IsVulkanSuppor
     }
     if (type == 1)
     {
+        // Intentional behavior: remove Adreno-specific gating and always allow type 1.
         return JNI_TRUE;
     }
 
